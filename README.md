@@ -8,7 +8,7 @@ Built for the Gnani.ai internship using Gnani's **Prisma** (speech-to-text) and 
 
 ## Live
 
-- Live app: _add your Render URL here_
+- Live app: (https://garage-voice-ai.onrender.com/)
 
 <!-- Add a screenshot or GIF here:
 ![GarageVoice screenshot](docs/screenshot.png)
