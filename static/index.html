@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1F3B34">
+  <title>GarageVoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Kalam:wght@400;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --wall: #1F3B34;
+      --wall-ink: #E6EFE9;
+      --wall-mute: #9DB8AC;
+      --paper: #F2F4EE;
+      --rule: #C8D5DB;
+      --ink: #1F2F6B;
+      --print: #22282B;
+      --marigold: #F2B531;
+      --marigold-deep: #A9791A;
+      --ok: #1F7A4A;
+      --watch: #D9731A;
+      --defect: #C0282D;
+      --none: #5E6B72;
+      --plate: #FBFBF6;
+      --plate-blue: #1C3FA8;
+      --label: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+      --hand: 'Kalam', 'Nirmala UI', cursive;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--wall-ink);
+      font: 500 18px/1.4 var(--label);
+      background-color: var(--wall);
+      background-image: repeating-linear-gradient(to bottom, rgba(255, 255, 255, .04) 0 2px, transparent 2px 14px);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .wrap {
+      max-width: 440px;
+      margin: 0 auto;
+      padding: 18px 16px 210px;
+    }
+
+    header h1 {
+      margin: 0 0 18px;
+      font: 700 28px/1 var(--label);
+      letter-spacing: .02em;
+    }
+
+    /* intro (empty state) */
+    .intro h2 {
+      margin: 8px 0 8px;
+      font: 700 40px/1.05 var(--label);
+    }
+
+    .intro p {
+      margin: 0 0 14px;
+      color: var(--wall-mute);
+      font-size: 20px;
+    }
+
+    .intro blockquote {
+      margin: 0 0 14px;
+      padding: 10px 14px;
+      border-left: 5px solid var(--marigold);
+      font: 400 18px/1.5 var(--hand);
+    }
+
+    .wrap:has(#card:not(.hidden)) #intro {
+      display: none;
+    }
+
+    /* what the app heard */
+    .heard {
+      margin: 0 0 16px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, .07);
+      border-radius: 6px;
+    }
+
+    .heard .lbl {
+      display: block;
+      color: var(--wall-mute);
+      font-size: 16px;
+    }
+
+    .heard #transcript {
+      font: 400 18px/1.5 var(--hand);
+    }
+
+    /* job card */
+    .job {
+      background: var(--paper);
+      color: var(--print);
+      padding: 20px 18px 16px;
+      border-radius: 4px;
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, .3);
+    }
+
+    .lbl {
+      font: 500 16px/1 var(--label);
+      color: var(--none);
+    }
+
+    .plate-wrap {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .plate {
+      display: flex;
+      align-items: stretch;
+      background: var(--plate);
+      border: 3px solid #111;
+      border-radius: 9px;
+      overflow: hidden;
+    }
+
+    .ind {
+      width: 36px;
+      background: var(--plate-blue);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      padding: 6px 0;
+      font: 700 12px/1 var(--label);
+    }
+
+    .ind i {
+      width: 15px;
+      height: 15px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      display: block;
+    }
+
+    #vehNo {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 6px;
+      border: 0;
+      background: transparent;
+      color: #111;
+      font: 700 42px/1.1 var(--label);
+      letter-spacing: .06em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    #vehNo:focus-visible {
+      outline: 4px solid var(--marigold);
+      outline-offset: -4px;
+    }
+
+    .model {
+      margin: 10px 0 0;
+      font: 400 20px/1.2 var(--hand);
+      color: var(--ink);
+    }
+
+    .hint {
+      margin: 2px 0 0;
+      color: var(--none);
+      font-size: 16px;
+    }
+
+    .parts {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .part {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid var(--rule);
+    }
+
+    .part-main {
+      min-width: 0;
+    }
+
+    .part-name {
+      font: 600 21px/1.1 var(--label);
+    }
+
+    .part-note {
+      margin: 3px 0 0;
+      font: 400 17px/1.35 var(--hand);
+      color: var(--ink);
+      overflow-wrap: anywhere;
+    }
+
+    .stamp {
+      flex: none;
+      min-width: 84px;
+      text-align: center;
+      padding: 5px 10px 4px;
+      font: 700 21px/1 var(--label);
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      border: 3px double currentColor;
+      border-radius: 4px;
+      transform: rotate(-5deg);
+      mix-blend-mode: multiply;
+      opacity: .93;
+    }
+
+    .stamp.ok {
+      color: var(--ok);
+    }
+
+    .stamp.watch {
+      color: var(--watch);
+    }
+
+    .stamp.defect {
+      color: var(--defect);
+    }
+
+    .stamp.none {
+      color: var(--none);
+      border: 2px dashed currentColor;
+      transform: none;
+      font-weight: 500;
+      font-size: 17px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .stamping .stamp:not(.none) {
+      animation: thunk .3s cubic-bezier(.2, 1.5, .4, 1) both;
+      animation-delay: calc(var(--i) * 130ms + 150ms);
+    }
+
+    @keyframes thunk {
+      from {
+        opacity: 0;
+        transform: scale(1.8) rotate(-14deg);
+      }
+
+      to {
+        opacity: .93;
+        transform: scale(1) rotate(-5deg);
+      }
+    }
+
+    .foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 0 10px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .remark {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .remark p {
+      margin: 4px 0 0;
+      font: 400 18px/1.45 var(--hand);
+      color: var(--ink);
+    }
+
+    .scorebox {
+      flex: none;
+      text-align: center;
+    }
+
+    .score {
+      width: 88px;
+      height: 88px;
+      display: grid;
+      place-items: center;
+      margin-top: 4px;
+      font: 700 32px/1 var(--hand);
+      border: 3px solid currentColor;
+      transform: rotate(-4deg);
+      border-radius: 52% 48% 55% 45% / 48% 54% 46% 52%;
+    }
+
+    .score[data-level="good"] {
+      color: var(--ok);
+    }
+
+    .score[data-level="mid"] {
+      color: var(--watch);
+    }
+
+    .score[data-level="low"] {
+      color: var(--defect);
+    }
+
+    .play {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      padding: 9px 14px;
+      background: transparent;
+      color: var(--print);
+      border: 2px solid var(--print);
+      border-radius: 8px;
+      font: 600 19px/1 var(--label);
+      cursor: pointer;
+    }
+
+    .play:focus-visible {
+      outline: 3px solid var(--ink);
+      outline-offset: 2px;
+    }
+
+    .fallback {
+      margin: 12px 0 0;
+      color: var(--none);
+      font-size: 16px;
+    }
+
+    /* type instead */
+    .slip {
+      margin-top: 18px;
+      padding: 12px 14px;
+      border: 2px dashed var(--wall-mute);
+      border-radius: 8px;
+    }
+
+    .slip summary {
+      cursor: pointer;
+      font: 600 20px/1.2 var(--label);
+    }
+
+    .slip textarea {
+      width: 100%;
+      margin-top: 12px;
+      padding: 10px;
+      border: 0;
+      border-radius: 4px;
+      resize: vertical;
+      background: var(--paper);
+      color: var(--ink);
+      font: 400 18px/1.45 var(--hand);
+    }
+
+    .slip .row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      padding: 11px 16px;
+      border-radius: 8px;
+      border: 2px solid var(--paper);
+      font: 700 19px/1 var(--label);
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      flex: 1;
+      background: var(--paper);
+      color: var(--print);
+    }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--paper);
+    }
+
+    .btn:disabled {
+      opacity: .6;
+    }
+
+    .btn:focus-visible,
+    .slip summary:focus-visible {
+      outline: 3px solid var(--marigold);
+      outline-offset: 2px;
+    }
+
+    /* bottom dock with the talk bar */
+    .dock {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 30px 16px max(14px, env(safe-area-inset-bottom));
+      background: linear-gradient(to top, var(--wall) 62%, rgba(31, 59, 52, 0));
+    }
+
+    .dock-inner {
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .status {
+      min-height: 1.4em;
+      margin: 0 0 8px;
+      text-align: center;
+      color: var(--wall-mute);
+      font-size: 19px;
+    }
+
+    .rec {
+      width: 100%;
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--marigold);
+      color: #1B1B16;
+      font: 700 30px/1 var(--label);
+      letter-spacing: .02em;
+      cursor: pointer;
+      box-shadow: 0 5px 0 var(--marigold-deep);
+    }
+
+    .rec:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 var(--marigold-deep);
+    }
+
+    .rec.is-recording {
+      background: var(--defect);
+      color: #fff;
+      box-shadow: 0 5px 0 #7E1D1F;
+    }
+
+    .rec:disabled {
+      opacity: .8;
+      cursor: progress;
+    }
+
+    .rec:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 3px;
+    }
+
+    .wave {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 34px;
+    }
+
+    .wave i {
+      display: block;
+      width: 5px;
+      height: 100%;
+      border-radius: 3px;
+      background: currentColor;
+      transform: scaleY(.4);
+    }
+
+    .wave i:nth-child(2) {
+      transform: scaleY(.8);
+    }
+
+    .wave i:nth-child(3) {
+      transform: scaleY(.55);
+    }
+
+    .wave i:nth-child(4) {
+      transform: scaleY(1);
+    }
+
+    .wave i:nth-child(5) {
+      transform: scaleY(.5);
+    }
+
+    .is-recording .wave i {
+      animation: wave .9s ease-in-out infinite;
+    }
+
+    .is-recording .wave i:nth-child(2) {
+      animation-delay: .12s;
+    }
+
+    .is-recording .wave i:nth-child(3) {
+      animation-delay: .24s;
+    }
+
+    .is-recording .wave i:nth-child(4) {
+      animation-delay: .36s;
+    }
+
+    .is-recording .wave i:nth-child(5) {
+      animation-delay: .48s;
+    }
+
+    @keyframes wave {
+      50% {
+        transform: scaleY(1);
+      }
+    }
+
+    .spin {
+      display: none;
+      width: 28px;
+      height: 28px;
+      border: 4px solid rgba(27, 27, 22, .25);
+      border-top-color: #1B1B16;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    .is-busy .wave {
+      display: none;
+    }
+
+    .is-busy .spin {
+      display: block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .toast {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: 175px;
+      max-width: 408px;
+      margin: 0 auto;
+      padding: 12px 14px;
+      background: var(--paper);
+      color: #7E1D1F;
+      border-left: 8px solid var(--defect);
+      font: 600 19px/1.3 var(--label);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, .3);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .stamping .stamp,
+      .is-recording .wave i,
+      .spin {
+        animation: none !important;
+      }
+
+      .rec:active {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <header>
+      <h1>GarageVoice</h1>
+    </header>
+
+    <section id="intro" class="intro">
+      <h2>Speak your inspection.</h2>
+      <p>Say the vehicle number, the model, then how each part looks.</p>
+      <blockquote lang="en-IN">“KA zero one AB one two three four, Swift. Engine theek hai, brake pad ghis gaye hain.”
+      </blockquote>
+      <p>Say the number slowly, in small groups.</p>
+    </section>
+
+    <section id="transcriptBox" class="heard hidden">
+      <span class="lbl">What I heard</span>
+      <div id="transcript"></div>
+    </section>
+
+    <section id="card" class="job hidden" aria-label="Inspection card">
+      <div class="plate-wrap">
+        <div class="plate">
+          <span class="ind" aria-hidden="true"><i></i>IND</span>
+          <input id="vehNo" maxlength="20" autocomplete="off" aria-label="Vehicle number. Edit to correct it.">
+        </div>
+        <p class="model" id="vehModel"></p>
+        <p class="hint">Tap the plate to fix a letter or digit.</p>
+      </div>
+
+      <ul id="rows" class="parts"></ul>
+
+      <div class="foot">
+        <div class="remark">
+          <span class="lbl">Remark</span>
+          <p id="summary"></p>
+        </div>
+        <div class="scorebox">
+          <span class="lbl">Score</span>
+          <div id="score" class="score" data-level="mid"></div>
+        </div>
+      </div>
+
+      <button id="replayBtn" class="play" type="button">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z" fill="currentColor" />
+        </svg>
+        Play again
+      </button>
+      <p id="mockNote" class="fallback hidden"></p>
+    </section>
+
+    <details class="slip">
+      <summary>Type instead</summary>
+      <textarea id="textIn" rows="3"
+        placeholder="KA 01 AB 1234 Swift, engine theek hai, brake pad ghis gaye hain"></textarea>
+      <div class="row">
+        <button id="textBtn" class="btn primary" type="button">Make card</button>
+        <button id="sampleBtn" class="btn ghost" type="button">Use example</button>
+      </div>
+    </details>
+  </main>
+
+  <div class="dock">
+    <div class="dock-inner">
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+      <button id="recBtn" class="rec" type="button">
+        <span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        <span class="spin" aria-hidden="true"></span>
+        <span id="recLabel">Tap and speak</span>
+      </button>
+    </div>
+  </div>
+
+  <audio id="player" class="hidden"></audio>
+  <div id="toast" class="toast hidden" role="alert"></div>
+  <script src="/app.js"></script>
+</body>
+
+</html>
