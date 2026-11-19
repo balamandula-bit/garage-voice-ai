@@ -209,4 +209,4 @@ Note: the default SQLite file lives on the instance disk and resets on redeploy 
 
 ## Acknowledgements
 
-Built during an internship at [Gnani.ai](https://www.gnani.ai), using the Prisma and Timbre APIs.
+Built for the internship at [Gnani.ai](https://www.gnani.ai), using the Prisma and Timbre APIs.
